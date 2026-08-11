@@ -98,7 +98,6 @@ app.post('/obp/transactions', async (req, res) => {
   try {
     const { username, password, bankId, accountId } = req.body;
 
-    // Step 1: log in, get token
     const loginResponse = await axios.post(
       `${OBP_HOST}/my/logins/direct`,
       {},
@@ -111,13 +110,11 @@ app.post('/obp/transactions', async (req, res) => {
     );
     const token = loginResponse.data.token;
 
-    // Step 2: fetch this account's transactions (owner view)
     const txnResponse = await axios.get(
       `${OBP_HOST}/obp/v5.1.0/my/banks/${bankId}/accounts/${accountId}/transactions`,
       { headers: { Authorization: `DirectLogin token="${token}"` } }
     );
 
-    // Step 3: simplify each transaction into what the app needs
     const transactions = txnResponse.data.transactions.map((t) => ({
       id: t.id,
       description: t.details && t.details.description ? t.details.description : 'No description',
@@ -129,6 +126,64 @@ app.post('/obp/transactions', async (req, res) => {
     res.json(transactions);
   } catch (error) {
     console.log('OBP transactions error:', error.response ? error.response.data : error.message);
+    res.status(500).json({ error: error.response ? error.response.data : error.message });
+  }
+});
+
+app.get('/tl/flow', async (req, res) => {
+  try {
+    const code = req.query.code;
+
+    const params = new URLSearchParams();
+    params.append('grant_type', 'authorization_code');
+    params.append('client_id', process.env.TL_CLIENT_ID);
+    params.append('client_secret', process.env.TL_CLIENT_SECRET);
+    params.append('redirect_uri', process.env.TL_REDIRECT_URI);
+    params.append('code', code);
+
+    const tokenResponse = await axios.post(
+      'https://auth.truelayer-sandbox.com/connect/token',
+      params.toString(),
+      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+    );
+
+    const token = tokenResponse.data.access_token;
+
+    const accountsResponse = await axios.get(
+      'https://api.truelayer-sandbox.com/data/v1/accounts',
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    res.json({ token: token, accounts: accountsResponse.data });
+  } catch (error) {
+    res.json({
+      success: false,
+      error: error.response ? error.response.data : error.message,
+    });
+  }
+});
+
+app.get('/tl/transactions', async (req, res) => {
+  try {
+    const token = req.query.token;
+    const accountId = req.query.accountId;
+
+    const txnResponse = await axios.get(
+      `https://api.truelayer-sandbox.com/data/v1/accounts/${accountId}/transactions`,
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    const transactions = txnResponse.data.results.map((t) => ({
+      id: t.transaction_id,
+      description: t.description || 'No description',
+      amount: t.amount,
+      currency: t.currency,
+      date: t.timestamp,
+    }));
+
+    res.json(transactions);
+  } catch (error) {
+    console.log('TL transactions error:', error.response ? error.response.data : error.message);
     res.status(500).json({ error: error.response ? error.response.data : error.message });
   }
 });
