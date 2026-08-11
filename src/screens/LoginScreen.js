@@ -53,13 +53,17 @@ function LoginScreen({ navigation }) {
 
       <TouchableOpacity
         style={[styles.continueButton, !canContinue && styles.continueButtonDisabled]}
-        onPress={() =>
-          navigation.navigate('Dashboard', {
-            provider: selectedProvider,
-            username: username,
-            password: password,
-          })
-        }
+        onPress={() => {
+  if (selectedProvider === 'truelayer') {
+    navigation.navigate('TrueLayerAuth');
+  } else {
+    navigation.navigate('Dashboard', {
+      provider: selectedProvider,
+      username: username,
+      password: password,
+    });
+  }
+}}
         disabled={!canContinue}
       >
         <Text style={styles.continueText}>Continue</Text>

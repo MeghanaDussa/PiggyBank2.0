@@ -3,25 +3,35 @@ import { View, Text, FlatList, StyleSheet } from 'react-native';
 import axios from 'axios';
 
 function TransactionsScreen({ route }) {
-  const { accountName, bankId, accountId, username, password } = route.params;
+  const { accountName } = route.params;
   const [transactions, setTransactions] = useState([]);
   const [status, setStatus] = useState('Loading transactions...');
 
   useEffect(() => {
-    axios
-      .post('http://10.0.2.2:4000/obp/transactions', {
-        username: username,
-        password: password,
-        bankId: bankId,
-        accountId: accountId,
-      })
-      .then((response) => {
-        setTransactions(response.data);
-        setStatus(response.data.length === 0 ? 'No transactions found' : '');
-      })
-      .catch((error) => {
-        setStatus('Could not load transactions');
-      });
+    if (route.params.provider === 'truelayer') {
+      // TrueLayer: fetch transactions with the token
+      axios
+        .get(`http://10.0.2.2:4000/tl/transactions?token=${route.params.token}&accountId=${route.params.accountId}`)
+        .then((response) => {
+          setTransactions(response.data);
+          setStatus(response.data.length === 0 ? 'No transactions found' : '');
+        })
+        .catch(() => setStatus('Could not load transactions'));
+    } else {
+      // OBP: fetch transactions with username/password
+      axios
+        .post('http://10.0.2.2:4000/obp/transactions', {
+          username: route.params.username,
+          password: route.params.password,
+          bankId: route.params.bankId,
+          accountId: route.params.accountId,
+        })
+        .then((response) => {
+          setTransactions(response.data);
+          setStatus(response.data.length === 0 ? 'No transactions found' : '');
+        })
+        .catch(() => setStatus('Could not load transactions'));
+    }
   }, []);
 
   return (

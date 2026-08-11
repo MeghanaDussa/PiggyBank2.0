@@ -4,6 +4,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from '../screens/LoginScreen';
 import DashboardScreen from '../screens/DashboardScreen';
 import TransactionsScreen from '../screens/TransactionsScreen';
+import TrueLayerAuthScreen from '../screens/TrueLayerAuthScreen';
 const Stack = createNativeStackNavigator();
 
 function AppNavigator() {
@@ -23,6 +24,11 @@ function AppNavigator() {
         <Stack.Screen
           name="Transactions"
           component={TransactionsScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="TrueLayerAuth"
+          component={TrueLayerAuthScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
