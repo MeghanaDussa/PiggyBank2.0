@@ -5,6 +5,8 @@ import LoginScreen from '../screens/LoginScreen';
 import DashboardScreen from '../screens/DashboardScreen';
 import TransactionsScreen from '../screens/TransactionsScreen';
 import TrueLayerAuthScreen from '../screens/TrueLayerAuthScreen';
+import PaymentScreen from '../screens/PaymentScreen';
+import TrueLayerPaymentScreen from '../screens/TrueLayerPaymentScreen';
 const Stack = createNativeStackNavigator();
 
 function AppNavigator() {
@@ -29,6 +31,16 @@ function AppNavigator() {
         <Stack.Screen
           name="TrueLayerAuth"
           component={TrueLayerAuthScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Payment"
+          component={PaymentScreen}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="TrueLayerPayment"
+          component={TrueLayerPaymentScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

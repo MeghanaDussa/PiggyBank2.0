@@ -6,8 +6,8 @@ function LoginScreen({ navigation }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
-  const providers = ['obp', 'truelayer', 'yapily'];
-  const labels = { obp: 'OBP Sandbox', truelayer: 'TrueLayer', yapily: 'Yapily' };
+  const providers = ['obp', 'truelayer'];
+  const labels = { obp: 'OBP Sandbox', truelayer: 'TrueLayer' };
 
   const canContinue =
     selectedProvider === 'obp'
