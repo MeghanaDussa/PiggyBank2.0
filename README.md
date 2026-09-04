@@ -1,20 +1,23 @@
-PiggyBank 2.0 (Frontend)
+PiggyBank 2.0
 
-The React Native mobile client for PiggyBank 2.0, a multi-currency account aggregation application used to compare two Open Banking API providers, the Open Bank Project (OBP) and TrueLayer.
+A multi-currency account aggregation application used to compare two Open Banking API providers, the Open Bank Project (OBP) and TrueLayer. This repository contains both the React Native mobile client (repo root) and the Express backend it talks to (backend/).
 
-This is the frontend only. It requires the PiggyBank 2.0 backend to be running, since the app fetches all data through it.
+The app fetches all data through the backend, so the backend must be running before the app will show any data.
 
 Prerequisites:
 Node.js (version 22.11.0 or later) and npm
 Android Studio, with an Android Virtual Device set up. This project was tested on a Pixel 8 emulator running Android 16.0 (API level 36, x86_64).
 The React Native development environment configured for Android (JDK and Android SDK). See the official React Native "Set Up Your Environment" guide for Android.
-The PiggyBank 2.0 backend, cloned and running (see the backend repository)
 
 Setup:
 
-Clone this repository and install dependencies:
+Clone this repository.
+Install the backend and start it first. The app calls it at http://10.0.2.2:4000, which is the Android emulator's alias for the host machine's localhost. See backend/README.md for its environment variables and setup details.
+   cd backend
    npm install
-Start the backend first. This app calls the backend at http://10.0.2.2:4000, which is the Android emulator's alias for the host machine's localhost. The backend must be running before you launch the app, or no data will load.
+   npm start
+In a separate terminal, install the frontend dependencies from the repo root:
+   npm install
 Start the Metro bundler:
    npm start
 In a separate terminal, build and run the app on the Android emulator:
